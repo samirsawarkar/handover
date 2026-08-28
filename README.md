@@ -1,4 +1,4 @@
-# Keybridge
+# Handover
 
 Use your MacBook keyboard and trackpad on an Android phone or tablet.
 
@@ -14,7 +14,7 @@ Open **Terminal** (press ⌘ + Space, type "Terminal", press Enter), then paste
 this one line and press Enter:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/YOUR-NAME/keybridge/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/samirsawarkar/handover/main/install.sh | bash
 ```
 
 It installs everything, finds your tablet, and asks you to switch on one
@@ -66,7 +66,7 @@ off every time the tablet reboots. Choose this only if a cable is impossible.
 
 Android does not let an ordinary app inject keystrokes — that needs a
 system-level permission no installable app can hold. There are exactly two ways
-in, and Keybridge uses both:
+in, and Handover uses both:
 
 - **USB:** [scrcpy](https://github.com/Genymobile/scrcpy)'s OTG mode speaks the
   AOAv2 protocol, so your Mac registers as a genuine USB keyboard and mouse. The
@@ -80,7 +80,7 @@ handles the window juggling.
 ### Why there is a window at all
 
 scrcpy captures your trackpad only while one of its windows has focus, and macOS
-will not give focus to a window too small to be real. So Keybridge lets a small
+will not give focus to a window too small to be real. So Handover lets a small
 window exist for a moment, clicks it to capture the mouse, then moves it far
 off-screen. The capture survives the move, so you see nothing afterwards.
 
