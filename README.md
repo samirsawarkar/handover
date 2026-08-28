@@ -10,14 +10,18 @@ Think of it as Universal Control, but for Android.
 
 ## Install
 
-1. Install [Homebrew](https://brew.sh) if you do not have it.
-2. Download this folder, open Terminal in it, and run:
+Open **Terminal** (press ⌘ + Space, type "Terminal", press Enter), then paste
+this one line and press Enter:
 
 ```bash
-./setup.sh
+curl -fsSL https://raw.githubusercontent.com/YOUR-NAME/keybridge/main/install.sh | bash
 ```
 
-The setup asks how your tablet is connected, finds it, and sets everything up.
+It installs everything, finds your tablet, and asks you to switch on one
+permission. That is the whole setup.
+
+> Not sure about Homebrew? If the installer says you need it, install it from
+> [brew.sh](https://brew.sh) first, then paste the line above again.
 
 ## Two ways to connect
 
