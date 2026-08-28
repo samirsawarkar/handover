@@ -1,66 +1,107 @@
-# Handover
+<h1 align="center">Handover</h1>
 
-Use your MacBook keyboard and trackpad on an Android phone or tablet.
+<p align="center">
+  <strong>Your Mac keyboard, on your Android.</strong><br>
+  One shortcut sends your MacBook keyboard and trackpad to an Android phone or tablet.
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <img alt="Platform: macOS" src="https://img.shields.io/badge/platform-macOS%2013%2B-lightgrey.svg">
+  <img alt="Android 5+" src="https://img.shields.io/badge/android-5.0%2B-green.svg">
+  <a href="https://github.com/samirsawarkar/handover/actions/workflows/shellcheck.yml"><img alt="Lint" src="https://github.com/samirsawarkar/handover/actions/workflows/shellcheck.yml/badge.svg"></a>
+</p>
+
+---
 
 Press **⌘ + ⌥ + T** and your typing goes to the tablet. Press it again and you are
-back on your Mac. You look at the tablet's own screen the whole time — nothing is
-mirrored on your Mac.
+back on your Mac. You keep looking at the tablet's own screen the whole time —
+nothing is mirrored on your Mac, and nothing is installed on the tablet.
 
-Think of it as Universal Control, but for Android.
+It is Universal Control, but for Android.
+
+```
+        MacBook                         Android tablet
+   ┌────────────────┐                 ┌────────────────┐
+   │  keyboard      │ ──── ⌘⌥T ────▶  │  types here    │
+   │  trackpad      │                 │  clicks here   │
+   └────────────────┘  ◀─── ⌘⌥T ────  └────────────────┘
+```
 
 ## Install
 
-Open **Terminal** (press ⌘ + Space, type "Terminal", press Enter), then paste
-this one line and press Enter:
+Open **Terminal** (⌘ + Space, type "Terminal", press Enter), paste this, press Enter:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/samirsawarkar/handover/main/install.sh | bash
 ```
 
-It installs everything, finds your tablet, and asks you to switch on one
-permission. That is the whole setup.
+It installs what is needed, finds your tablet, and asks you to switch on one
+macOS permission. That is the whole setup.
 
-> Not sure about Homebrew? If the installer says you need it, install it from
-> [brew.sh](https://brew.sh) first, then paste the line above again.
+Requires [Homebrew](https://brew.sh). If you do not have it, the installer says so.
+
+## Why this exists
+
+Apple's Universal Control only talks to Apple devices. Logitech Flow only moves
+between computers, and needs Logitech hardware. Nothing shipped lets a MacBook
+keyboard type on an Android tablet sitting next to it — so this does.
+
+| | Handover | Universal Control | Logitech Flow | KDE Connect |
+|---|---|---|---|---|
+| Mac → Android | **yes** | no | no | limited |
+| App on the Android device | **none** | — | — | required |
+| Root or Developer options | **none** (USB) | — | — | not required |
+| Mirrors a screen onto your Mac | **no** | no | no | no |
+| Cost | **free, open source** | free, Apple only | needs their hardware | free |
 
 ## Two ways to connect
 
-**USB cable (recommended).** Nothing to enable on the tablet. Plug it in, tap
-"OK" on the prompt that appears on the tablet, done. Keeps working after a
-reboot.
+**USB cable — recommended.** Nothing to enable on the tablet. Plug in, tap OK on
+the prompt the tablet shows, done. Survives reboots.
 
 **Wi-Fi.** No cable, but the tablet needs *Developer options → Wireless
-debugging* switched on, and on most Android versions that switch turns itself
-off every time the tablet reboots. Choose this only if a cable is impossible.
+debugging*, and Android switches that back off after every restart.
 
-|                        | USB cable | Wi-Fi |
-|------------------------|-----------|-------|
-| Developer options      | not needed | required, always |
-| Survives a reboot      | yes       | no, switch it on again |
-| Setup                  | plug in   | pairing, IP address |
-| Cable                  | required  | none |
+| | USB cable | Wi-Fi |
+|---|---|---|
+| Developer options | not needed | required, always |
+| Survives a reboot | yes | no, switch it on again |
+| Setup | plug in | pairing, IP address |
 
-## If it does not work
+## Troubleshooting
 
-**"No Android device on USB"**
-- Use a **data** cable. Cables that came with a charger are often power-only and
-  cannot carry data — there is no software fix for that.
-- macOS blocks new USB devices until you approve them: System Settings →
-  Privacy & Security → **Allow accessories to connect**.
-- Plug straight into the Mac. USB hubs and docks stop this from working.
+<details>
+<summary><strong>"Could not see your tablet"</strong></summary>
 
-**The shortcut does nothing**
-- System Settings → Privacy & Security → **Accessibility** → Hammerspoon must be
-  switched on. If it already is, switch it off and on again, then restart
-  Hammerspoon.
+- Use a **data** cable. Cables bundled with chargers are frequently power-only and
+  cannot carry data — no software can work around that.
+- macOS blocks unfamiliar USB devices: System Settings → Privacy & Security →
+  **Allow accessories to connect**.
+- Plug straight into the Mac. Hubs and docks break the USB accessory protocol.
+</details>
 
-**Typing works but the trackpad does not**
-- Press the shortcut again to reconnect. The trackpad is captured when the
-  connection starts; if it did not catch the first time, a reconnect fixes it.
+<details>
+<summary><strong>The shortcut does nothing</strong></summary>
 
-**Wi-Fi mode stopped working after a reboot**
-- Turn *Wireless debugging* back on in Developer options. This is Android's
-  behaviour, not something this tool can prevent.
+System Settings → Privacy & Security → **Accessibility** → Hammerspoon must be on.
+If it already is, switch it off and on again, then restart Hammerspoon. macOS
+sometimes keeps the checkbox lit after the permission has actually lapsed.
+</details>
+
+<details>
+<summary><strong>Typing works but the trackpad does not</strong></summary>
+
+Press the shortcut again to reconnect. The trackpad is captured when the
+connection starts; if that did not catch the first time, reconnecting fixes it.
+</details>
+
+<details>
+<summary><strong>Wi-Fi stopped working after a reboot</strong></summary>
+
+Switch *Wireless debugging* back on in Developer options. This is Android's
+behaviour and no tool can prevent it. Use a cable if you can.
+</details>
 
 ## How it works
 
@@ -69,32 +110,55 @@ system-level permission no installable app can hold. There are exactly two ways
 in, and Handover uses both:
 
 - **USB:** [scrcpy](https://github.com/Genymobile/scrcpy)'s OTG mode speaks the
-  AOAv2 protocol, so your Mac registers as a genuine USB keyboard and mouse. The
-  tablet just thinks hardware got plugged in. No debugging, no permissions.
-- **Wi-Fi:** scrcpy's normal mode over adb, which is why Developer options are
-  unavoidable there.
+  **AOAv2** accessory protocol, so your Mac registers as a genuine USB keyboard
+  and mouse. The tablet simply thinks hardware was plugged in. No debugging, no
+  permissions, no app.
+- **Wi-Fi:** scrcpy's normal mode over **adb**, which is why Developer options
+  are unavoidable there.
 
-[Hammerspoon](https://www.hammerspoon.org) provides the global shortcut and
-handles the window juggling.
+[Hammerspoon](https://www.hammerspoon.org) supplies the global shortcut.
 
-### Why there is a window at all
+<details>
+<summary><strong>Why a window exists at all</strong></summary>
 
-scrcpy captures your trackpad only while one of its windows has focus, and macOS
-will not give focus to a window too small to be real. So Handover lets a small
-window exist for a moment, clicks it to capture the mouse, then moves it far
-off-screen. The capture survives the move, so you see nothing afterwards.
+scrcpy captures the trackpad only while one of its windows holds focus, and macOS
+refuses focus to a window too small to be real. So Handover lets a small window
+exist for a moment, clicks it to capture the mouse, then moves it far off-screen.
+The capture survives the move, so nothing is visible afterwards.
 
-This was arrived at the hard way: a 1-pixel window receives neither focus nor
-clicks, and no scrcpy flag forces mouse capture.
+This was found the hard way: a 1-pixel window receives neither focus nor clicks,
+and no scrcpy flag forces mouse capture.
+</details>
 
 ## Limitations
 
-- Apple Silicon and Intel Macs; macOS 13+.
-- USB mode needs a real USB data connection — no hubs, no charge-only cables.
-- Wi-Fi mode needs both devices on the same network, with AP isolation off.
-- The tablet's IP is stored at setup. If your router hands it a new one, run
-  `./setup.sh` again.
+- macOS 13+, Apple Silicon or Intel.
+- USB mode needs a real data connection — no hubs, no charge-only cables.
+- Wi-Fi mode needs both devices on the same network with AP isolation off.
+- The tablet's IP is stored at setup; if your router hands out a new one, run the
+  installer again.
+- Requires Homebrew, and Hammerspoon needs Accessibility permission.
+
+## Contributing
+
+Issues and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
+Good first contributions are listed there, including an uninstall script,
+a configurable shortcut, and testing on devices other than Samsung.
+
+## Credits
+
+Built on [scrcpy](https://github.com/Genymobile/scrcpy) by Genymobile and
+[Hammerspoon](https://www.hammerspoon.org). Handover is the glue and the setup
+experience; those projects do the hard parts.
 
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+---
+
+<sub><strong>Keywords:</strong> use Mac keyboard on Android · type on Android from Mac ·
+MacBook trackpad on Android tablet · Universal Control for Android · Logitech Flow
+alternative for Android · share keyboard and mouse between Mac and Android ·
+scrcpy OTG keyboard · control Android from macOS without mirroring · KVM for Mac and
+Android · Samsung Galaxy Tab with MacBook keyboard</sub>

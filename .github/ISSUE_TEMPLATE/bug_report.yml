@@ -1,0 +1,34 @@
+name: Bug report
+description: Something does not work
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations: { required: true }
+  - type: dropdown
+    id: connection
+    attributes:
+      label: How is the tablet connected?
+      options: [USB cable, Wi-Fi, Could not get that far]
+    validations: { required: true }
+  - type: input
+    id: mac
+    attributes:
+      label: Mac and macOS version
+      placeholder: "MacBook Air M2, macOS 15.2"
+    validations: { required: true }
+  - type: input
+    id: android
+    attributes:
+      label: Android device and version
+      placeholder: "Galaxy Tab S6 Lite, Android 13"
+    validations: { required: true }
+  - type: textarea
+    id: usb
+    attributes:
+      label: USB device list (only if your device is not detected)
+      description: "Run: ioreg -p IOUSB -w0 -l | grep -E '\"USB Product Name\"|\"idVendor\"|\"USB Serial Number\"'"
+      render: shell
