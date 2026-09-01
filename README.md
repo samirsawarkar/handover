@@ -13,6 +13,10 @@
 curl -fsSL https://raw.githubusercontent.com/samirsawarkar/handover/main/install.sh | bash
 ```
 
+<video src="assets/demo.mp4" controls muted playsinline width="600">
+  Demo: pressing cmd-option-T sends the Mac keyboard and trackpad to an Android tablet.
+</video>
+
 <img src="assets/diagram.svg" alt="Diagram: MacBook keyboard and trackpad, cmd-option-T, Android tablet" width="600">
 
 Press **⌘ + ⌥ + T** and your typing goes to the tablet. Press it again and you are
