@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Handover — type on your Android with your Mac keyboard</title>
+<meta name="description" content="Press one shortcut and type on your Android tablet using your Mac keyboard and trackpad. No app on the device, no mirroring, no root.">
+<style>
+  @font-face{
+    font-family:'JBM';
+    src:local('JetBrains Mono'),local('Menlo'),local('Consolas');
+  }
+  :root{
+    --bg:#ffffff; --ink:#000000; --mute:#4d4d4d; --accent:#000000;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:ui-monospace,'JBM','Courier New',monospace;
+    font-size:17px; line-height:1.7;
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:0 20px}
+  a{color:var(--accent)}
+  a:hover{background:var(--ink);color:var(--bg)}
+
+  /* top bar, like a title block */
+  .bar{border-bottom:2px solid var(--ink);padding:14px 0;font-size:12px;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--mute);
+    display:flex;justify-content:space-between}
+  .bar span{color:var(--ink)}
+
+  header{padding:64px 0 48px;border-bottom:2px solid var(--ink)}
+  .kicker{font-size:12px;color:var(--accent);letter-spacing:.1em;
+    text-transform:uppercase;margin-bottom:14px}
+  .kicker::before{content:"> "}
+  h1{font-size:clamp(30px,5.5vw,46px);font-weight:700;line-height:1.2;
+    letter-spacing:-0.01em;max-width:15ch}
+  .sub{margin-top:18px;max-width:52ch;color:var(--mute);font-size:17px}
+
+  .diagram{margin-top:36px;border:2px solid var(--ink);display:inline-block;
+    font-size:13px}
+  .diagram-row{display:flex}
+  .dcell{padding:14px 22px;border-right:2px solid var(--ink)}
+  .dcell:last-child{border-right:none}
+  .dcell b{display:block;margin-bottom:4px}
+  .dcell.mid{background:var(--ink);color:var(--bg);text-align:center;
+    display:flex;flex-direction:column;justify-content:center}
+  .dcell.mid .key{font-weight:700}
+  .dcell.mid .small{font-size:11px;color:#999999;margin-top:3px}
+
+  .cmdbox{margin-top:40px}
+  .cmdbox .label{font-size:12px;color:var(--mute);margin-bottom:8px}
+  .cmdline{background:var(--ink);color:var(--bg);padding:16px 18px;
+    display:flex;justify-content:space-between;align-items:center;gap:14px;
+    overflow-x:auto}
+  .cmdline code{white-space:pre;font-size:13.5px}
+  .cmdline code::before{content:"$ ";color:#000000}
+  .copybtn{background:transparent;border:1px solid #000000;color:#999999;
+    font-family:inherit;font-size:11px;padding:6px 12px;cursor:pointer;
+    flex:none;text-transform:uppercase;letter-spacing:.05em}
+  .copybtn:hover{border-color:var(--bg);color:var(--bg)}
+  .copybtn.done{color:#000000;border-color:#000000}
+  .req{font-size:13.5px;color:var(--mute);margin-top:12px}
+
+  section{padding:56px 0;border-bottom:2px solid var(--ink)}
+  section:last-of-type{border-bottom:none}
+  .num{font-size:12px;color:var(--accent)}
+  h2{font-size:20px;margin:6px 0 6px;letter-spacing:-.01em}
+  .lead{color:var(--mute);font-size:16px;margin-bottom:32px;max-width:52ch}
+
+  .steps{counter-reset:step}
+  .step{display:grid;grid-template-columns:32px 1fr;gap:14px;
+    padding:16px 0;border-top:1px solid #cccccc}
+  .step:first-child{border-top:none}
+  .step .idx{counter-increment:step;font-weight:700;color:var(--accent)}
+  .step .idx::before{content:counter(step) "."}
+  .step strong{display:block;font-size:16.5px;margin-bottom:5px}
+  .step p{color:var(--mute);font-size:15px;line-height:1.6}
+  kbd{font-family:inherit;background:var(--ink);color:var(--bg);
+    padding:2px 7px;font-size:12.5px}
+
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid #cccccc}
+  th{color:var(--mute);font-weight:600;font-size:11.5px;
+    text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid var(--ink)}
+  td:first-child,th:first-child{padding-left:0}
+  .ok::before{content:"✓ ";color:#000000}
+  .x{color:#767676}
+  .x::before{content:"— "}
+
+  .paths{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--ink)}
+  @media(max-width:560px){.paths{grid-template-columns:1fr}}
+  .path{padding:20px;border-left:2px solid var(--ink)}
+  .path:first-child{border-left:none}
+  @media(max-width:560px){.path{border-left:none;border-top:2px solid var(--ink)}
+    .path:first-child{border-top:none}}
+  .path .flag{font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:8px}
+  .path h3{font-size:15px;margin-bottom:10px}
+  .path ul{padding-left:18px;color:var(--mute);font-size:14.5px;line-height:1.7}
+  .path li{margin-bottom:4px}
+
+  details{border-top:1px solid #cccccc;padding:14px 0}
+  details:last-child{padding-bottom:0}
+  summary{cursor:pointer;font-size:16px;font-weight:600;list-style:none;
+    display:flex;gap:10px}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"+";color:var(--accent);font-weight:700;flex:none}
+  details[open] summary::before{content:"–"}
+  details p{color:var(--mute);font-size:15px;line-height:1.6;margin-top:10px;
+    padding-left:20px;max-width:54ch}
+
+  footer{padding:30px 0;font-size:12px;color:var(--mute);
+    display:flex;justify-content:space-between}
+  footer a{color:var(--mute);text-decoration:underline}
+  footer a:hover{color:var(--bg)}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="wrap" style="display:flex;justify-content:space-between;width:100%">
+    <span>handover</span>
+    <span>macOS · MIT license</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header>
+  <div class="kicker">read me first</div>
+  <h1>Type on your Android with the keyboard you already have.</h1>
+  <p class="sub">One shortcut sends your MacBook's keyboard and trackpad to a
+  phone or tablet next to it. Nothing installed on the device. Nothing
+  mirrored on your Mac. You just type.</p>
+
+  <div class="diagram">
+    <div class="diagram-row">
+      <div class="dcell"><b>YOUR MACBOOK</b>keyboard<br>trackpad</div>
+      <div class="dcell mid"><span class="key">⌘ ⌥ T</span><span class="small">press to send</span></div>
+      <div class="dcell"><b>YOUR ANDROID</b>types here<br>clicks here</div>
+    </div>
+  </div>
+
+  <div class="cmdbox">
+    <div class="label">install — paste into terminal</div>
+    <div class="cmdline">
+      <code>curl -fsSL https://raw.githubusercontent.com/samirsawarkar/handover/main/install.sh | bash</code>
+      <button class="copybtn" onclick="copyCmd(this)">copy</button>
+    </div>
+    <p class="req">takes ~2 min · requires <a href="https://brew.sh" target="_blank" rel="noopener">homebrew</a></p>
+  </div>
+</header>
+
+<section>
+  <div class="num">01</div>
+  <h2>how it works</h2>
+  <p class="lead">Three things happen once. After that, it's just the shortcut.</p>
+  <div class="steps">
+    <div class="step"><div class="idx"></div><div>
+      <strong>run the command above</strong>
+      <p>installs what's needed, finds your tablet over USB, asks for one macOS permission.</p>
+    </div></div>
+    <div class="step"><div class="idx"></div><div>
+      <strong>plug the tablet in with a USB cable</strong>
+      <p>tap "OK" on the prompt the tablet shows. that's the only thing you ever approve.</p>
+    </div></div>
+    <div class="step"><div class="idx"></div><div>
+      <strong>press <kbd>⌘</kbd> <kbd>⌥</kbd> <kbd>T</kbd></strong>
+      <p>your keyboard and trackpad now control the tablet. press it again for your Mac back.</p>
+    </div></div>
+  </div>
+</section>
+
+<section>
+  <div class="num">02</div>
+  <h2>usb or wi-fi</h2>
+  <p class="lead">Pick one when the installer asks. USB is simpler for almost everyone.</p>
+  <div class="paths">
+    <div class="path">
+      <div class="flag">recommended</div>
+      <h3>usb cable</h3>
+      <ul>
+        <li>nothing to enable on the tablet</li>
+        <li>survives a restart</li>
+        <li>no developer options</li>
+      </ul>
+    </div>
+    <div class="path">
+      <div class="flag" style="color:var(--mute)">alternative</div>
+      <h3>wi-fi</h3>
+      <ul>
+        <li>needs developer options on</li>
+        <li>turns back off on reboot</li>
+        <li>needs a shared network</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="num">03</div>
+  <h2>why bother</h2>
+  <p class="lead">Nothing else moves a Mac keyboard onto Android.</p>
+  <table>
+    <thead><tr><th></th><th>handover</th><th>universal control</th><th>logitech flow</th></tr></thead>
+    <tbody>
+      <tr><td>mac → android</td><td class="ok">yes</td><td class="x">no</td><td class="x">no</td></tr>
+      <tr><td>app on the android device</td><td class="ok">none</td><td class="x">—</td><td class="x">—</td></tr>
+      <tr><td>special hardware</td><td class="ok">none</td><td class="x">apple only</td><td class="x">logitech only</td></tr>
+      <tr><td>cost</td><td class="ok">free</td><td class="x">free</td><td class="x">paid hardware</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <div class="num">04</div>
+  <h2>questions</h2>
+  <details>
+    <summary>does it mirror my tablet's screen onto my mac?</summary>
+    <p>no. you keep looking at the tablet itself. nothing about its screen appears on your mac.</p>
+  </details>
+  <details>
+    <summary>do i need to root the tablet, or turn on developer options?</summary>
+    <p>not over usb. your mac registers as an ordinary keyboard and mouse — the tablet just thinks hardware got plugged in.</p>
+  </details>
+  <details>
+    <summary>does it install anything on the android device?</summary>
+    <p>no app, no apk. everything runs on the mac.</p>
+  </details>
+  <details>
+    <summary>my cable doesn't work</summary>
+    <p>chargers often ship power-only cables that carry no data — the most common snag. use any usb-c cable meant for file transfer.</p>
+  </details>
+  <details>
+    <summary>is it free?</summary>
+    <p>yes. open source, mit license.</p>
+  </details>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;width:100%">
+    <span><a href="https://github.com/samirsawarkar/handover" target="_blank" rel="noopener">source on github</a></span>
+    <span>mit license</span>
+  </div>
+</footer>
+
+<script>
+function copyCmd(btn){
+  const cmd = "curl -fsSL https://raw.githubusercontent.com/samirsawarkar/handover/main/install.sh | bash";
+  navigator.clipboard.writeText(cmd).then(()=>{
+    btn.textContent = "copied"; btn.classList.add("done");
+    setTimeout(()=>{btn.textContent="copy"; btn.classList.remove("done")}, 1800);
+  });
+}
+</script>
+</body>
+</html>

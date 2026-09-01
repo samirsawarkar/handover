@@ -1,18 +1,19 @@
-<h1 align="center">Handover</h1>
+# Handover
 
-<p align="center">
-  <strong>Your Mac keyboard, on your Android.</strong><br>
-  One shortcut sends your MacBook keyboard and trackpad to an Android phone or tablet.
-</p>
+**One shortcut sends your Mac's keyboard and trackpad to an Android phone or tablet — no app on the device, no mirroring, no root.**
 
-<p align="center">
+<p>
   <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <img alt="Platform: macOS" src="https://img.shields.io/badge/platform-macOS%2013%2B-lightgrey.svg">
   <img alt="Android 5+" src="https://img.shields.io/badge/android-5.0%2B-green.svg">
   <a href="https://github.com/samirsawarkar/handover/actions/workflows/shellcheck.yml"><img alt="Lint" src="https://github.com/samirsawarkar/handover/actions/workflows/shellcheck.yml/badge.svg"></a>
 </p>
 
----
+```bash
+curl -fsSL https://raw.githubusercontent.com/samirsawarkar/handover/main/install.sh | bash
+```
+
+<img src="assets/diagram.svg" alt="Diagram: MacBook keyboard and trackpad, cmd-option-T, Android tablet" width="600">
 
 Press **⌘ + ⌥ + T** and your typing goes to the tablet. Press it again and you are
 back on your Mac. You keep looking at the tablet's own screen the whole time —
@@ -20,24 +21,11 @@ nothing is mirrored on your Mac, and nothing is installed on the tablet.
 
 It is Universal Control, but for Android.
 
-```
-        MacBook                         Android tablet
-   ┌────────────────┐                 ┌────────────────┐
-   │  keyboard      │ ──── ⌘⌥T ────▶  │  types here    │
-   │  trackpad      │                 │  clicks here   │
-   └────────────────┘  ◀─── ⌘⌥T ────  └────────────────┘
-```
-
 ## Install
 
-Open **Terminal** (⌘ + Space, type "Terminal", press Enter), paste this, press Enter:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/samirsawarkar/handover/main/install.sh | bash
-```
-
-It installs what is needed, finds your tablet, and asks you to switch on one
-macOS permission. That is the whole setup.
+Open **Terminal** (⌘ + Space, type "Terminal", press Enter), paste the command
+at the top of this page, press Enter. It installs what is needed, finds your
+tablet, and asks you to switch on one macOS permission. That is the whole setup.
 
 Requires [Homebrew](https://brew.sh). If you do not have it, the installer says so.
 
