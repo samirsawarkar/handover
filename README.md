@@ -33,6 +33,22 @@ tablet, and asks you to switch on one macOS permission. That is the whole setup.
 
 Requires [Homebrew](https://brew.sh). If you do not have it, the installer says so.
 
+## Web Control Center (Dashboard)
+
+For visual device control, live screen preview, and drag-and-drop file transfers, launch the built-in Control Center:
+
+```bash
+python3 handover_server.py
+```
+Open **[http://localhost:5050](http://localhost:5050)** in your browser:
+
+- **Dual Modes:** Switch seamlessly between **iPad Sidecar Mode** (floating companion window) and **Universal Control Mode** (windowless direct control).
+- **Ultra-Fast Live Preview:** Low-latency hardware-accelerated preview with touch/tap input support.
+- **Live Resource Footprint:** Real-time Mac and Android RAM/CPU consumption metrics (~25 MB Mac RAM).
+- **Drag-and-Drop File Transfer:** Instant wireless push to `/sdcard/Download/` with Android media scanner indexing.
+- **Dynamic App Launcher:** 1-click launch for recent and top Android applications with clean vector brand icons.
+- **One-Click Complete Close-up:** Cleanly disconnects scrcpy sessions, puts phone to sleep, and resets state.
+
 ## Why this exists
 
 Apple's Universal Control only talks to Apple devices. Logitech Flow only moves
